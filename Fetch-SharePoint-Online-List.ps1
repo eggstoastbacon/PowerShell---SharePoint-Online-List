@@ -1,19 +1,9 @@
-#This script requires SPOnline-Get-Cookie.Ps1
-$data = @()
-$userName = "name@yourmicrosoftaccount.com"
-# Get encrypted password for account
-$securedPassword = Get-Content "\path\to\enc\yourencryptedpassword file.enc" | ConvertTo-SecureString
-#Root of the site your list is in
-$urlBase = "https://yourdomain.sharepoint.com/yoursite"
-# Add %20 instead of spaces.
-$spList = "Your%20List"
-
 #Need to decrypt the password
 $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($securedPassword)
 $decryptedPassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
 
 #Function to fetch the cookie, requires decrypted password
-$spCookie = . D:\Your\Path\SPOnline-Get-Cookie.ps1 -url "$urlBase" -format "XML" -username $username -password $decryptedPassword
+$spCookie = . D:\Scripts\Functions\SPOnline-Get-Cookie.ps1 -url "$urlBase" -format "XML" -username $username -password $decryptedPassword
 clear-variable decryptedPassword
 
 #Clean up the cookie
@@ -22,11 +12,10 @@ $spCookie = $spCookie.replace("<SPOIDCRL>", "")
 
 $credential = New-Object System.Management.Automation.PSCredential ($username, $securedPassword)
 
-# Set our integer variables
+# adjust this and add more +75 depending on the size of your list, eg. , 450, 525. 
+# You could probably dynamically create variables until you recieved no more list items using while
 $page = 0
 $count = 0
-$empty = 0
-#if the item count hasn't changed in the last pass, stop.
 while (($count -eq 0) -or ($count -ne $countTracker)) {
     $page = $page + 20
     $countTracker = $count
@@ -58,22 +47,23 @@ while (($count -eq 0) -or ($count -ne $countTracker)) {
         ContentType = $contentType
         Method      = $method
         WebSession  = $webSession
-
     }
 
     $spRESTResults = Invoke-RestMethod @props
     $spRESTResultsCorrected = $spRESTResults -creplace '"Id":', '"Fake-Id":' 
     try {
-    $spResults = $spRESTResultsCorrected | ConvertFrom-Json } catch{}
+        $spResults = $spRESTResultsCorrected | ConvertFrom-Json 
+    }
+    catch { }
     $spListItems = $spResults.d.results
    
     #Store results avoiding deuplicates and empties "NULL"
     foreach ($spListItem in $spListItems) { 
-    if($splistitem.ID -notin $data.ID -and $splistitem -notlike $NULL){
-    $data += $splistitem
-    #Tally of the number of items
-    $count = $data.count
-    $splistitem.ID
+        $id = $id + 1
+        if ($splistitem.ID -notin $data.ID -and $splistitem -notlike $NULL) {
+            $data += $splistitem
+            $count = $data.count
+            $splistitem.ID
+        }
     }
-    }
-    }
+}
