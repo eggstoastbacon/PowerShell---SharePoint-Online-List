@@ -1,7 +1,8 @@
 # SCRIPT BY EGGSTOASTBACON :: https://github.com/eggstoastbacon/
 
 #This script requires SPOnline-Get-Cookie.ps1, change the path to it below.
-
+#Force TLS 1.2
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $userName = "someaccount@microsoft.com"
 # Get encrypted password for account
 $securedPassword = Get-Content "D:\your\enc\password-file.enc" | ConvertTo-SecureString
