@@ -1,14 +1,22 @@
-#requires SPOnline-Get-Cookie.ps1
-
+#This script requires SPOnline-Get-Cookie.Ps1
+$data = @()
 $userName = "name@yourmicrosoftaccount.com"
+# Get encrypted password for account
 $securedPassword = Get-Content "\path\to\enc\yourencryptedpassword file.enc" | ConvertTo-SecureString
-$urlBase = "https://sharepoint.com/yoursite"
+#Root of the site your list is in
+$urlBase = "https://yourdomain.sharepoint.com/yoursite"
+# Add %20 instead of spaces.
 $spList = "Your%20List"
 
-$BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecuredPassword)
+#Need to decrypt the password
+$BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($securedPassword)
 $decryptedPassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
-$spCookie = . D:\Path\To\SPOnline-Get-Cookie.ps1 -url "$urlBase" -format "XML" -username $username -password $decryptedPassword
 
+#Function to fetch the cookie, requires decrypted password
+$spCookie = . D:\Path\To\SPOnline-Get-Cookie.ps1 -url "$urlBase" -format "XML" -username $username -password $decryptedPassword
+clear-variable decryptedPassword
+
+#Clean up the cookie
 $spCookie = $spCookie.replace("</SPOIDCRL>", "")
 $spCookie = $spCookie.replace("<SPOIDCRL>", "")
 
@@ -45,16 +53,15 @@ foreach ($page in $pages) {
         WebSession  = $webSession
     }
 
-
-    Write-Host "----------------------------------------------------------------------------"  -ForegroundColor Green 
-    Write-Host "Getting all the list elements of $sListName using REST" -ForegroundColor Green 
-    Write-Host "----------------------------------------------------------------------------"  -ForegroundColor Green 
     $spRESTResults = Invoke-RestMethod @props
     $spRESTResultsCorrected = $spRESTResults -creplace '"Id":', '"Fake-Id":' 
     $spResults = $spRESTResultsCorrected | ConvertFrom-Json 
     $spListItems = $spResults.d.results 
 
+    #Store results avoiding deuplicates and empties "NULL"
     foreach ($spListItem in $spListItems) { 
-     $spListItems
+    if($splistitem -notin $data -and $data -notlike $NULL){
+    $data += $splistitem
+    }
     }
     }
