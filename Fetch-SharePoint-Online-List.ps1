@@ -20,7 +20,8 @@ $spCookie = . D:\Scripts\Functions\SPOnline-Get-Cookie.ps1 -url "$urlBase" -form
 clear-variable decryptedPassword
 
 #Clean up the cookie
-$spCookie = $spCookie.replace("</SPOIDCRL>", "").replace("<SPOIDCRL>", "")
+$spCookie = $spCookie.replace("</SPOIDCRL>", "")
+$spCookie = $spCookie.replace("<SPOIDCRL>", "")
 
 $credential = New-Object System.Management.Automation.PSCredential ($username, $securedPassword)
 
