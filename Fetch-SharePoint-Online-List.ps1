@@ -71,8 +71,8 @@ while (($count -eq 0) -or ($count -ne $countTracker)) {
     catch { }
     $spListItems = $spResults.d.results
    
-    #Store results avoiding deuplicates and empties "NULL"
-  foreach ($spListItem in $spListItems | `
+    #Store results avoiding duplicates
+    foreach ($spListItem in $spListItems | `
             Where-Object { $_.ID -notin $data.ID -and $spListItem -notlike $NULL } ) { 
             
         $data += $spListItem
