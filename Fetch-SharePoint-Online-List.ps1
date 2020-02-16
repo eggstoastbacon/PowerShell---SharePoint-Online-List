@@ -27,7 +27,7 @@ while (($count -eq 0) -or ($count -ne $countTracker)) {
     # https://social.technet.microsoft.com/wiki/contents/articles/35796.sharepoint-2013-using-rest-api-for-selecting-filtering-sorting-and-pagination-in-sharepoint-list.aspx
     [System.Uri]$uri = "$urlBase/_api/web/lists/GetByTitle('$spList')/items?`$skiptoken=Paged=TRUE%26p_ID=$page&`$top=20 "
     
-    $contentType = "application/json" # Add the content type
+    $contentType = "application/json" 
     $method = [Microsoft.PowerShell.Commands.WebRequestMethod]::Get 
     $body = '' 
 
@@ -43,7 +43,7 @@ while (($count -eq 0) -or ($count -ne $countTracker)) {
         "accept" = "application/json;odata=verbose" 
     } 
 
-    # Splat the parameters
+    #Plop the PARAMS
     $props = @{
         Uri         = $uri.AbsoluteUri
         Headers     = $headers
