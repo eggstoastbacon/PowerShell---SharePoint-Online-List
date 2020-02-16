@@ -60,10 +60,12 @@ while (($count -eq 0) -or ($count -ne $countTracker)) {
     #Store results avoiding deuplicates and empties "NULL"
     foreach ($spListItem in $spListItems) { 
         $id = $id + 1
-        if ($splistitem.ID -notin $data.ID -and $splistitem -notlike $NULL) {
-            $data += $splistitem
+        if ($spListItem.ID -notin $data.ID -and $spListItem -notlike $NULL) {
+            $data += $spListItem
             $count = $data.count
-            $splistitem.ID
+            #Displays the ID it's added, 
+            #This is where we output data, take $splistitem and add it to a SQL database or output it to a CSV, up to you.
+            $spListItem.ID
         }
     }
 }
