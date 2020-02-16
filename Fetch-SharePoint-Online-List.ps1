@@ -1,3 +1,5 @@
+# SCRIPT BY EGGSTOASTBACON :: https://github.com/eggstoastbacon/
+
 #This script requires SPOnline-Get-Cookie.ps1, change the path to it below.
 
 #Need to decrypt the password
