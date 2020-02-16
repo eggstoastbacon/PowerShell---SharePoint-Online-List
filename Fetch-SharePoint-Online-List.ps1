@@ -2,6 +2,15 @@
 
 #This script requires SPOnline-Get-Cookie.ps1, change the path to it below.
 
+
+$userName = "someaccount@microsoft.com"
+# Get encrypted password for account
+$securedPassword = Get-Content "D:\your\enc\password-file.enc" | ConvertTo-SecureString
+#Root of the site your list is in
+$urlBase = "https://yourdomain.sharepoint.com/sites/yoursite"
+# Add %20 instead of spaces.
+$spList = "Your%20List"
+
 #Need to decrypt the password
 $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($securedPassword)
 $decryptedPassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
@@ -18,6 +27,7 @@ $credential = New-Object System.Management.Automation.PSCredential ($username, $
 
 # adjust this and add more +75 depending on the size of your list, eg. , 450, 525. 
 # You could probably dynamically create variables until you recieved no more list items using while
+$data = @()
 $page = 0
 $count = 0
 while (($count -eq 0) -or ($count -ne $countTracker)) {
