@@ -61,7 +61,6 @@ while (($count -eq 0) -or ($count -ne $countTracker)) {
    
     #Store results avoiding deuplicates and empties "NULL"
     foreach ($spListItem in $spListItems) { 
-        $id = $id + 1
         if ($spListItem.ID -notin $data.ID -and $spListItem -notlike $NULL) {
             $data += $spListItem
             $count = $data.count
