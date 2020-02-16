@@ -2,7 +2,6 @@
 
 #This script requires SPOnline-Get-Cookie.ps1, change the path to it below.
 
-
 $userName = "someaccount@microsoft.com"
 # Get encrypted password for account
 $securedPassword = Get-Content "D:\your\enc\password-file.enc" | ConvertTo-SecureString
