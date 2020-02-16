@@ -76,12 +76,9 @@ while (($count -eq 0) -or ($count -ne $countTracker)) {
             Where-Object { $_.ID -notin $data.ID -and $spListItem -notlike $NULL } ) { 
             
         $data += $spListItem
-
         $count = $data.count
-
         #Displays the ID it's added, 
         $spListItem.ID
-
         #This is where we output data, take $splistitem and add it to a SQL database or output it to a CSV, up to you.             
     }
 }
