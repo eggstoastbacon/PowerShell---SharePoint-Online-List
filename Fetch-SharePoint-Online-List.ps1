@@ -13,7 +13,7 @@ $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($securedPas
 $decryptedPassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
 
 #Function to fetch the cookie, requires decrypted password
-$spCookie = . D:\Path\To\SPOnline-Get-Cookie.ps1 -url "$urlBase" -format "XML" -username $username -password $decryptedPassword
+$spCookie = . D:\Scripts\Functions\SPOnline-Get-Cookie.ps1 -url "$urlBase" -format "XML" -username $username -password $decryptedPassword
 clear-variable decryptedPassword
 
 #Clean up the cookie
@@ -22,11 +22,19 @@ $spCookie = $spCookie.replace("<SPOIDCRL>", "")
 
 $credential = New-Object System.Management.Automation.PSCredential ($username, $securedPassword)
 
-$pages = (0, 75, 150, 225, 300, 375)
-
-foreach ($page in $pages) {
-
-    [System.Uri]$uri = "$urlBase/_api/web/lists/GetByTitle('$spList)/items?%24skiptoken=Paged%3dTRUE%26p_ID%3d$page&$TOP=1000" # Add the Uri
+# adjust this and add more +75 depending on the size of your list, eg. , 450, 525. 
+# You could probably dynamically create variables until you recieved no more list items using while
+$page = 0
+$count = 0
+$empty = 0
+#if the item count hasn't changed in the last pass, stop.
+while (($count -eq 0) -or ($count -ne $countTracker)) {
+    $page = $page + 20
+    $countTracker = $count
+    # Add your own filters, default is page by page until it cannot find anymore items.
+    # https://social.technet.microsoft.com/wiki/contents/articles/35796.sharepoint-2013-using-rest-api-for-selecting-filtering-sorting-and-pagination-in-sharepoint-list.aspx
+    [System.Uri]$uri = "$urlBase/_api/web/lists/GetByTitle('$spList')/items?`$skiptoken=Paged=TRUE%26p_ID=$page&`$top=20 "
+    
     $contentType = "application/json" # Add the content type
     $method = [Microsoft.PowerShell.Commands.WebRequestMethod]::Get 
     $body = '' 
@@ -51,17 +59,22 @@ foreach ($page in $pages) {
         ContentType = $contentType
         Method      = $method
         WebSession  = $webSession
+
     }
 
     $spRESTResults = Invoke-RestMethod @props
     $spRESTResultsCorrected = $spRESTResults -creplace '"Id":', '"Fake-Id":' 
-    $spResults = $spRESTResultsCorrected | ConvertFrom-Json 
-    $spListItems = $spResults.d.results 
-
+    try {
+    $spResults = $spRESTResultsCorrected | ConvertFrom-Json } catch{}
+    $spListItems = $spResults.d.results
+   
     #Store results avoiding deuplicates and empties "NULL"
     foreach ($spListItem in $spListItems) { 
-    if($splistitem -notin $data -and $data -notlike $NULL){
+    if($splistitem.ID -notin $data.ID -and $splistitem -notlike $NULL){
     $data += $splistitem
+    #Tally of the number of items
+    $count = $data.count
+    $splistitem.ID
     }
     }
     }
