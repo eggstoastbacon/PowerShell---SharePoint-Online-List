@@ -1,3 +1,5 @@
+#This script requires SPOnline-Get-Cookie.ps1, change the path to it below.
+
 #Need to decrypt the password
 $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($securedPassword)
 $decryptedPassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
