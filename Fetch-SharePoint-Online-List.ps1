@@ -16,7 +16,7 @@ $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($securedPas
 $decryptedPassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
 
 #Function to fetch the cookie, requires decrypted password
-$spCookie = . D:\Scripts\Functions\SPOnline-Get-Cookie.ps1 -url "$urlBase" -format "XML" -username $username -password $decryptedPassword
+$spCookie = . D:\Location\To\Functions\SPOnline-Get-Cookie.ps1 -url "$urlBase" -format "XML" -username $username -password $decryptedPassword
 clear-variable decryptedPassword
 
 #Clean up the cookie
