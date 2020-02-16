@@ -13,7 +13,7 @@ $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($securedPas
 $decryptedPassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
 
 #Function to fetch the cookie, requires decrypted password
-$spCookie = . D:\Scripts\Functions\SPOnline-Get-Cookie.ps1 -url "$urlBase" -format "XML" -username $username -password $decryptedPassword
+$spCookie = . D:\Your\Path\SPOnline-Get-Cookie.ps1 -url "$urlBase" -format "XML" -username $username -password $decryptedPassword
 clear-variable decryptedPassword
 
 #Clean up the cookie
@@ -22,8 +22,7 @@ $spCookie = $spCookie.replace("<SPOIDCRL>", "")
 
 $credential = New-Object System.Management.Automation.PSCredential ($username, $securedPassword)
 
-# adjust this and add more +75 depending on the size of your list, eg. , 450, 525. 
-# You could probably dynamically create variables until you recieved no more list items using while
+# Set our integer variables
 $page = 0
 $count = 0
 $empty = 0
