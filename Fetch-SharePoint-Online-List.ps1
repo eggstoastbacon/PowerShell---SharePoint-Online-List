@@ -72,13 +72,16 @@ while (($count -eq 0) -or ($count -ne $countTracker)) {
     $spListItems = $spResults.d.results
    
     #Store results avoiding deuplicates and empties "NULL"
-    foreach ($spListItem in $spListItems) { 
-        if ($spListItem.ID -notin $data.ID -and $spListItem -notlike $NULL) {
-            $data += $spListItem
-            $count = $data.count
-            #Displays the ID it's added, 
-            #This is where we output data, take $splistitem and add it to a SQL database or output it to a CSV, up to you.
-            $spListItem.ID
-        }
+  foreach ($spListItem in $spListItems | `
+            Where-Object { $_.ID -notin $data.ID -and $spListItem -notlike $NULL } ) { 
+            
+        $data += $spListItem
+
+        $count = $data.count
+
+        #Displays the ID it's added, 
+        $spListItem.ID
+
+        #This is where we output data, take $splistitem and add it to a SQL database or output it to a CSV, up to you.             
     }
 }
